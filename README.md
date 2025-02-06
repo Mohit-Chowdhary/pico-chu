@@ -1,0 +1,2 @@
+# pico-chu
+Microprocessor project
