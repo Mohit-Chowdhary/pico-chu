@@ -10,4 +10,4 @@ while True:
     else:
         print("Button Pressed")
         pico_led.on()
-    sleep(0.1)
+    sleep(0.4)
