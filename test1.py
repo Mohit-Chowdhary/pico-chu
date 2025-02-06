@@ -1,4 +1,13 @@
-from picozero import pico_led
-from picozero import LED
+from picozero import pico_led,LED, Button
 from time import sleep
-pico_led.blink(on_time=1,off_time=1,n=10,wait=True)
+
+button = Button(18)
+
+while True:
+    if button.is_released:
+        print("Button Released")
+        pico_led.off()
+    else:
+        print("Button Pressed")
+        pico_led.on()
+    sleep(0.1)
