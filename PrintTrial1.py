@@ -168,7 +168,7 @@ class SSD1306_SPI(SSD1306):
 
 
 WIDTH=128
-HEIGHT=32
+HEIGHT=64
 
 i2c=I2C(0,scl=Pin(17),sda=Pin(16))
 a=i2c.scan()

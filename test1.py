@@ -1,7 +1,7 @@
 from picozero import pico_led,LED, Button
 from time import sleep
 
-button = Button(18)
+button = Button(15)
 
 while True:
     if button.is_released:
