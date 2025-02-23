@@ -220,7 +220,7 @@ snake = [(64, 32)]
 direction = "RIGHT"
 food = (random.randint(0, WIDTH // SNAKE_SIZE - 1) * SNAKE_SIZE, random.randint(0, HEIGHT // SNAKE_SIZE - 1) * SNAKE_SIZE)
 score = 0
-speed = 0.1
+speed = 0.2
 
 def move_snake():
     global food, direction, snake, score
@@ -272,7 +272,7 @@ while True:
         direction = "UP"
         food = (random.randint(0, WIDTH // SNAKE_SIZE - 1) * SNAKE_SIZE, random.randint(0, HEIGHT // SNAKE_SIZE - 1) * SNAKE_SIZE)
         score = 0           # Reset score
-        speed = 0.1        # Reset speed
+        speed = 0.2        # Reset speed
     
     for segment in snake:
         oled.rect(segment[0], segment[1], SNAKE_SIZE, SNAKE_SIZE, 1)
