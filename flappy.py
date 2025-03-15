@@ -10,6 +10,7 @@ oled = ssd1306.SSD1306_I2C(128, 64, i2c)  # screen size setting
 button = Pin(14, Pin.IN, Pin.PULL_DOWN)  # flap button
 
 GRAVITY = 1  # how fast bird falls
+FLAP_STRENGTH = -4  # how much it goes up when u press
 PIPE_WIDTH = 20
 GAP_HEIGHT = 30  # space between pipes
 
