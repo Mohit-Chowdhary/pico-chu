@@ -73,8 +73,8 @@ def show_menu():
         oled.text("PICO-CHU", 30, 5)
         oled.hline(0, 15, WIDTH, 1)
         
-        oled.text("> Snake" if selected == 0 else "  Snake", 13, 25)
-        oled.text("> Flappy Bird" if selected == 1 else "  Flappy Bird", 13, 35)
+        oled.text("> Snake" if selected == 0 else "  Snake", 14, 25)
+        oled.text("> Flappy Bird" if selected == 1 else "  Flappy Bird", 14, 35)
         
         oled.show()
         time.sleep(0.15)
@@ -86,16 +86,17 @@ def show_menu():
             if selected == 0:
                 show_snake_menu()
             else:
-                play_flappy_bird()
+                show_bird_menu()
+                #play_flappy_bird()
 
 def show_snake_menu():
     selected = 0  # 0 = Play, 1 = High Score
     while True:
         oled.fill(0)
-        oled.text("Snake Game", 30, 10)
-        oled.hline(0, 20, WIDTH, 1)
-        oled.text("> Play" if selected == 0 else "  Play", 20, 30)
-        oled.text("> High Score" if selected == 1 else "  High Score", 20, 40)
+        oled.text("Snake Game", 30, 5)
+        oled.hline(0, 15, WIDTH, 1)
+        oled.text("> Play" if selected == 0 else "  Play", 14, 25)
+        oled.text("> High Score" if selected == 1 else "  High Score", 14, 35)
         oled.show()
         
         time.sleep(0.15)
@@ -182,6 +183,26 @@ def move_snake():
     
     return True
 
+def show_bird_menu():
+    selected = 0  # 0 = Play, 1 = High Score
+    while True:
+        oled.fill(0)
+        oled.text("Flappy Bird", 30, 5)
+        oled.hline(0, 15, WIDTH, 1)
+        oled.text("> Play" if selected == 0 else "  Play", 14, 25)
+        oled.text("> High Score" if selected == 1 else "  High Score", 14, 35)
+        oled.show()
+        
+        time.sleep(0.15)
+        new_direction = read_joystick()
+        if new_direction == "UP" or new_direction == "DOWN":
+            selected = 1 - selected
+        if not joy_button.value():
+            if selected == 0:
+                play_flappy_bird()
+            else:
+                show_high_scores_bird()
+
 def play_flappy_bird():
     bird_y = HEIGHT // 2
     velocity = 0
@@ -191,6 +212,7 @@ def play_flappy_bird():
     score = 0
     
     while True:
+        global Highscore_Birdy
         oled.fill(0)
         velocity += gravity
         bird_y += velocity
@@ -209,6 +231,13 @@ def play_flappy_bird():
             oled.text("GAME OVER", 30, 30)
             oled.text(f"Score: {score}", 30, 40)
             oled.show()
+            
+            if score > Highscore_Birdy[2]:  # Only insert if num is greater than the smallest in the list
+                Highscore_Birdy.append(score)  # Add new number
+                Highscore_Birdy.sort(reverse=True)  # Sort in descending order
+                Highscore_Birdy.pop()
+            print(Highscore_Birdy)
+            
             time.sleep(3)
             show_menu()
         
