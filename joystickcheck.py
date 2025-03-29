@@ -16,8 +16,8 @@ joystick_y = ADC(Pin(26))  # VRY connected to GP26 (ADC0)
 joystick_btn = Pin(22, Pin.IN, Pin.PULL_UP)  # Button connected to GP22
 
 while True:
-    x_val = joystick_x.read_u16() // 16  # Read X-axis (0-65535)
-    y_val = joystick_y.read_u16() // 16 # Read Y-axis (0-65535)
+    x_val = joystick_x.read_u16()  # Read X-axis (0-65535)
+    y_val = joystick_y.read_u16()  # Read Y-axis (0-65535)
     btn_state = joystick_btn.value()  # Read button state (0 = pressed, 1 = not pressed)
 
     print(f"X: {x_val}, Y: {y_val}, Button: {'Pressed' if btn_state == 0 else 'Not Pressed'}")
