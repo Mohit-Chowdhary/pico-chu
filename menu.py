@@ -75,18 +75,23 @@ def show_menu():
         
         oled.text("> Snake" if selected == 0 else "  Snake", 14, 25)
         oled.text("> Flappy Bird" if selected == 1 else "  Flappy Bird", 14, 35)
+        oled.text("> 2048" if selected == 2 else "  2048", 14, 45)
         
         oled.show()
         time.sleep(0.15)
         
         new_direction = read_joystick()
-        if new_direction == "UP" or new_direction == "DOWN":
-            selected = 1 - selected  # Toggle between Snake and Flappy Bird
+        if new_direction == "UP":
+            selected = (selected - 1) % 3
+        elif new_direction == "DOWN":
+            selected = (selected + 1) % 3
         if not joy_button.value():
             if selected == 0:
                 show_snake_menu()
-            else:
+            elif selected==1:
                 show_bird_menu()
+            else:
+                play_2048()
                 #play_flappy_bird()
 
 def show_snake_menu():
@@ -248,5 +253,129 @@ def play_flappy_bird():
         oled.rect(pipe_x, pipe_gap + 30, 10, HEIGHT - pipe_gap - 30, 1)
         oled.show()
         time.sleep(0.1)
+        
+#2048
+        
+board = [[0 for _ in range(4)] for _ in range(4)]
+
+def get_empty_cells(board):
+    empty = []
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] == 0:
+                empty.append((i, j))
+    return empty
+
+def add_random_tile(board):
+    empty_cells = get_empty_cells(board)
+    if not empty_cells:
+        return False  # No space left
+
+    i, j = random.choice(empty_cells)
+    board[i][j] = 4 if random.random() < 0.1 else 2  # 10% chance of 4, else 2
+    return True
+
+def slide_left(row):
+    new = [i for i in row if i != 0]
+    merged = []
+    skip = False
+    for i in range(len(new)):
+        if skip:
+            skip = False
+            continue
+        if i + 1 < len(new) and new[i] == new[i+1]:
+            merged.append(new[i]*2)
+            skip = True
+        else:
+            merged.append(new[i])
+    while len(merged) < 4:
+        merged.append(0)
+    return merged
+
+def move_left(board):
+    changed = False
+    for i in range(4):
+        new_row = slide_left(board[i])
+        if new_row != board[i]:
+            board[i] = new_row
+            changed = True
+    return changed
+
+def move_right(board):
+    changed = False
+    for i in range(4):
+        reversed_row = list(reversed(board[i]))
+        new_row = slide_left(reversed_row)
+        new_row.reverse()
+        if new_row != board[i]:
+            board[i] = new_row
+            changed = True
+    return changed
+
+def move_up(board):
+    changed = False
+    for j in range(4):
+        col = [board[i][j] for i in range(4)]
+        new_col = slide_left(col)
+        for i in range(4):
+            if board[i][j] != new_col[i]:
+                board[i][j] = new_col[i]
+                changed = True
+    return changed
+
+def move_down(board):
+    changed = False
+    for j in range(4):
+        col = [board[i][j] for i in range(4)][::-1]
+        new_col = slide_left(col)
+        new_col.reverse()
+        for i in range(4):
+            if board[i][j] != new_col[i]:
+                board[i][j] = new_col[i]
+                changed = True
+    return changed
+
+def draw_board(oled, board):
+    oled.fill(0)
+    tile_w = 30  # width of each tile
+    tile_h = 15  # height of each tile
+
+    for i in range(4):
+        for j in range(4):
+            x = j * tile_w
+            y = i * tile_h
+            oled.rect(x, y, tile_w, tile_h, 1)  # draw rectangle
+            val = str(board[i][j]) if board[i][j] != 0 else ""
+            # center text inside the tile
+            text_x = x + (tile_w - len(val)*8) // 2
+            text_y = y + (tile_h - 8) // 2
+            oled.text(val, text_x, text_y)
+    oled.show()
+        
+def play_2048():
+    add_random_tile(board)
+    add_random_tile(board)
+    while(True):
+        draw_board(oled, board)
+        
+        direct_2048=read_joystick()
+        
+        if direct_2048 == "UP" and move_up(board):
+            add_random_tile(board)
+            time.sleep(0.3)
+        elif direct_2048 == "DOWN" and move_down(board):
+            add_random_tile(board)
+            time.sleep(0.3)
+        elif direct_2048 == "LEFT" and move_left(board):
+            add_random_tile(board)
+            time.sleep(0.3)
+        elif direct_2048 == "RIGHT" and move_right(board):
+            add_random_tile(board)
+            time.sleep(0.3)
+        #elif not move_up(board) and not move_right(board) and not move_left(board) and move_down(board):
+            #show_menu()
+
+        time.sleep(0.05)
+        
 
 show_menu()
